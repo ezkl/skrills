@@ -39,7 +39,13 @@ fn resolve_project_dir_uses_current_dir() {
     let resolved = resolve_project_dir(None, "test");
 
     std::env::set_current_dir(original).expect("restore original directory");
-    assert_eq!(resolved, Some(temp.path().to_path_buf()));
+
+    let expected = temp.path().canonicalize().expect("temp path should canonicalize");
+    let actual = resolved
+        .expect("should resolve to current directory")
+        .canonicalize()
+        .expect("resolved path should canonicalize");
+    assert_eq!(actual, expected);
 }
 
 #[cfg(unix)]
