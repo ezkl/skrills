@@ -357,20 +357,27 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let skills_dir = temp_dir.path();
 
+        // Create subdirectory for valid SKILL.md
+        let valid_dir = skills_dir.join("valid-skill");
+        std::fs::create_dir(&valid_dir).unwrap();
         std::fs::write(
-            skills_dir.join("SKILL.md"),
+            valid_dir.join("SKILL.md"),
             "---\nname: skill-md\ndescription: Valid name\n---\n# Content\nBody.",
         )
         .unwrap();
 
+        // Create subdirectory for lowercase skill.md (should be ignored on all platforms)
+        let lowercase_dir = skills_dir.join("lowercase-skill");
+        std::fs::create_dir(&lowercase_dir).unwrap();
         std::fs::write(
-            skills_dir.join("skill.md"), // lowercase - should be ignored
+            lowercase_dir.join("skill.md"),
             "---\nname: lowercase\ndescription: Should be ignored\n---\n# Content\nBody.",
         )
         .unwrap();
 
+        // Create README.md in root (should be ignored)
         std::fs::write(
-            skills_dir.join("README.md"), // different name - should be ignored
+            skills_dir.join("README.md"),
             "# README\nNot a skill file.",
         )
         .unwrap();
